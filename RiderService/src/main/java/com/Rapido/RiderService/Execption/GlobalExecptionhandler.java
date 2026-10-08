@@ -1,8 +1,11 @@
 package com.Rapido.RiderService.Execption;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.RestClientException;
 
 import com.Rapido.RiderService.DTO.Responsestructure;
 
@@ -23,5 +26,22 @@ public class GlobalExecptionhandler {
 		responsestructure.setMessage("Rider is already exist please login");
 		responsestructure.setData("rider is exist");
 		return responsestructure;
+	}
+	@ExceptionHandler(RestClientException.class)
+	public Responsestructure<String> handlerestclientexcetion(RestClientException e){
+		
+		Responsestructure<String> error = new Responsestructure<>();
+		error.setStatuscode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+		error.setMessage("Error calling CustomerService: " + e.getMessage());
+		error.setData(null);
+		return error;
+	}
+	@ExceptionHandler(locationExecption.class)
+	public Responsestructure<String> handleException(){
+		Responsestructure<String> error = new Responsestructure<>();
+		error.setStatuscode(HttpStatus.NOT_FOUND.value());
+		error.setMessage("Give correct Coordinate");
+		error.setData(null);
+		return error;
 	}
 }

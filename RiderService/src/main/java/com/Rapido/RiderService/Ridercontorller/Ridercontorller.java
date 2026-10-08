@@ -1,5 +1,7 @@
 package com.Rapido.RiderService.Ridercontorller;
 
+import java.io.IOException;
+import java.net.http.HttpResponse;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.Rapido.RiderService.DTO.AssignedRideDTO;
 import com.Rapido.RiderService.DTO.Cordinate;
 import com.Rapido.RiderService.DTO.CreateRiderAccount;
 import com.Rapido.RiderService.DTO.Responsestructure;
@@ -58,21 +61,52 @@ public class Ridercontorller {
 			@RequestBody Cordinate cordinate) {
 		riderServicelayer.SendCordinateLocation(riderid, vehicletype, cordinate);
 	}
+//
+//	@GetMapping("/rider/getallAssingedride")
+//	public List<String> AssignedRide(@RequestParam int riderid, @RequestParam String vehicleType) {
+//		return riderServicelayer.FindAllAssingedride(riderid, vehicleType);
+//	}
+//
+//	@PostMapping("/rider/acceptingbooking")
+//	public void Acceptbooking(@RequestParam int riderid, @RequestParam int bookingid) {
+//		riderServicelayer.acceptingBooking(riderid, bookingid);
+//	}
 
+//	@GetMapping("/rider/movetowardspickup")
+//	public void moveTowardsPickup(@RequestParam int bid, @RequestParam double latitude, @RequestParam double longtitude,
+//			HttpServletResponse resp) {
+//		riderServicelayer.moveTowardsPickup(bid, latitude, longtitude, resp);
+//	}
 	@GetMapping("/rider/getallAssingedride")
-	public List<String> AssignedRide(@RequestParam int riderid, @RequestParam String vehicleType) {
-		return riderServicelayer.FindAllAssingedride(riderid, vehicleType);
+	public List<AssignedRideDTO> AssignedRide(@RequestParam int riderid) {
+		return riderServicelayer.FindAllAssingedride(riderid);
 	}
 
 	@PostMapping("/rider/acceptingbooking")
-	public void Acceptbooking(@RequestParam int riderid, @RequestParam int bookingid) {
-		riderServicelayer.acceptingBooking(riderid, bookingid);
+	public Responsestructure<String> Acceptbooking(@RequestParam int riderid, @RequestParam int bookingid) {
+		return riderServicelayer.acceptingBooking(bookingid, riderid);
 	}
 
-	@GetMapping("/rider/movetowardspickup")
-	public void moveTowardsPickup(@RequestParam int bid, @RequestParam double latitude, @RequestParam double longtitude,
-			HttpServletResponse resp) {
-		riderServicelayer.moveTowardsPickup(bid, latitude, longtitude, resp);
+	@GetMapping("/ride/movetowardspickuplocation")
+	public void movingtopicpuplocation(@RequestParam int bookingid,HttpServletResponse response) throws IOException{
+	    String googleMapsUrl = riderServicelayer.ridermovingtopicpuplocation(bookingid);
+	    response.sendRedirect(googleMapsUrl);
 	}
-
+	@PutMapping("/rider/updatebookingstatus")
+	public Responsestructure<String> updatingthebookingStatus(@RequestParam int bookingid) {
+		return riderServicelayer.updatebookingStatus(bookingid);
+	}
+	@GetMapping("/rider/otpverification")
+	public void optverify(@RequestParam String otp , @RequestParam int bookingid) {
+		riderServicelayer.OTPverification(otp,bookingid);
+	}
+	@GetMapping("/ride/movetowardsdroplocation")
+	public void movingtodroplocation(@RequestParam int bookingid ,HttpServletResponse response) throws IOException {
+		String googleMapUrl =riderServicelayer.movetowardsdroplocation(bookingid);
+		response.sendRedirect(googleMapUrl);
+	}
+	@PatchMapping("/rider/completeride")
+	public void rideCompleted(@RequestParam int booking) {
+		riderServicelayer.rideComplete(booking);
+	}
 }

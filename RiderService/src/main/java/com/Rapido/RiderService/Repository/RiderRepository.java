@@ -12,5 +12,6 @@ public interface RiderRepository extends JpaRepository<Rider, Integer> {
 	public boolean existsByDrivinglicence(String drivinglicence);
 
 	public boolean existsByEmail(String email);
+	
 
 }
